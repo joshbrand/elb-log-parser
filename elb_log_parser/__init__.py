@@ -11,7 +11,7 @@
 import csv
 from datetime import datetime
 import logging
-from urllib.parse import urlparse
+from urllib.parse import urlsplit
 
 try:
     from cStringIO import StringIO
@@ -64,7 +64,7 @@ def parse_line(log_line):
     response.elb_sent_bytes = int(log_line[10])
     response.elb_http_method = log_line[11].split(" ")[0]
 
-    url = urlparse.urlsplit(log_line[11].split(" ")[1])
+    url = urlsplit(log_line[11].split(" ")[1])
     response.elb_request_protocol = url.scheme
     response.elb_request_host = url.hostname
     response.elb_path = url.path
