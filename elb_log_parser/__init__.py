@@ -11,7 +11,7 @@
 import csv
 from datetime import datetime
 import logging
-import urlparse
+from urllib.parse import urlparse
 
 try:
     from cStringIO import StringIO
