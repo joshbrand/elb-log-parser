@@ -30,7 +30,7 @@ except ImportError:
 from elb_log_parser.version import __version__  # NOQA
 
 
-def parse(reader):
+def parse(reader, browser_fields=False):
     result = []
 
     if isinstance(reader, six.string_types):
@@ -39,14 +39,14 @@ def parse(reader):
     for line in csv.reader(reader, delimiter=' '):
         if len(line) < 2:
             continue
-        result.append(parse_line(line))
+        result.append(parse_line(line, browser_fields))
 
     return result
 
 
-def parse_line(log_line):
+def parse_line(log_line, browser_fields):
     response = Response()
-    
+
     response.timestamp = datetime.strptime('%s %s' % (log_line[0].split("T")[0], log_line[0].split("T")[1].split(".")[0]),'%Y-%m-%d %H:%M:%S')
     response.elb_name = log_line[1]
     response.elb_client_ip = log_line[2].split(":")[0]
@@ -70,7 +70,10 @@ def parse_line(log_line):
     response.elb_path = url.path
     response.elb_querystring = url.query
 
-    parse_user_agent(response, log_line[12])
+    if browser_fields:
+        parse_user_agent(response, log_line[12])
+    else:
+        response.elb_user_agent = log_line[12]
 
     response.elb_ssl_cipher = log_line[13]
     response.elb_ssl_protocol = log_line[14]
